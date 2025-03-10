@@ -15,32 +15,42 @@ while True:
     opcao = int(input("Digite a opção desejada: "))
     if opcao == 1:
         if ValorSaldo >= 10:
-            print("bem vindo ao fortune tiger")
-            print("1 - jogar")
-            print("2 - sair")
-            opcao = int(input("Digite a opção desejada: "))
-            if opcao == 1:
-                print("Jogando...")
-                ValorSaldo -= 10
-                jogadas += 1
-                if jogadas <= 3:
-                    ganho = random.choice([10, 20])
-                    ValorSaldo += ganho
-                    print(f"Você ganhou R$ {ganho}!")
-                else:
-                    resultado = random.choice(["ganhou", "perdeu", "neutro"])
-                    if resultado == "ganhou":
-                        ganho = random.choice([10, 20])
+            while True:
+                print("bem vindo ao fortune tiger")
+                print("1 - jogar")
+                print("2 - sair")
+                opcao = int(input("Digite a opção desejada: "))
+                if opcao == 1:
+                    print("Jogando...")
+                    aporte = float(input("Digite o valor do aporte: "))
+                    ValorSaldo -= aporte
+                    jogadas += 1
+                    if jogadas <= 3:
+                        ganho = random.choice([aporte*2, aporte*3])
                         ValorSaldo += ganho
                         print(f"Você ganhou R$ {ganho}!")
-                    elif resultado == "perdeu":
-                        print("Você perdeu a aposta.")
                     else:
-                        ValorSaldo += 10
-                        print("Você manteve o valor da aposta.")
-                print("Saldo atual: R$ ", ValorSaldo)
-            else:
-                print("Saindo...")
+                        resultado = random.choice(["ganhou", "perdeu", "neutro"])
+                        if resultado == "ganhou":
+                            ganho = random.choice([aporte, aporte*2])
+                            ValorSaldo += ganho
+                            print(f"Você ganhou R$ {ganho}!")
+                        elif resultado == "perdeu":
+                            print("Você perdeu a aposta.")
+                        else:
+                            ValorSaldo += 10
+                            print("Você manteve o valor da aposta.")
+                    print("Saldo atual: R$ ", ValorSaldo)
+                    continuar = input("Deseja continuar? (s/n) ")
+                    if continuar == "n":
+                        print("Saindo...")
+                        break
+                    elif ValorSaldo < 10:
+                        print("Saldo insuficiente")
+                        break
+                else:
+                    print("Saindo...")
+                    break
         else:
             print("Saldo insuficiente")
     elif opcao == 2:
