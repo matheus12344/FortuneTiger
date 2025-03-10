@@ -1,4 +1,5 @@
 import random
+import matplotlib.pyplot as plt
 
 print("=" * 40)
 print("Fortune Tiger")
@@ -6,6 +7,7 @@ print("=" * 40)
 
 ValorSaldo = float(input("Digite o valor do saldo: "))
 jogadas = 0
+resultados = []
 
 while True:
     print("1 - fortune tiger")
@@ -40,6 +42,7 @@ while True:
                         else:
                             ValorSaldo += 10
                             print("Você manteve o valor da aposta.")
+                    resultados.append(ValorSaldo)
                     print("Saldo atual: R$ ", ValorSaldo)
                     continuar = input("Deseja continuar? (s/n) ")
                     if continuar == "n":
@@ -86,5 +89,14 @@ while True:
         break
     else:
         print("Opção inválida")
+
+# Plotando o gráfico de desempenho
+plt.plot(resultados, marker='o')
+plt.title('Desempenho das Apostas no Fortune Tiger')
+plt.xlabel('Jogadas')
+plt.ylabel('Saldo (R$)')
+plt.grid(True)
+plt.show()
+
 print("Fim do programa")
 print("=" * 40)
