@@ -1,5 +1,7 @@
 import random
 import matplotlib.pyplot as plt
+import csv
+import os
 
 print("=" * 40)
 print("Fortune Tiger")
@@ -9,11 +11,21 @@ ValorSaldo = float(input("Digite o valor do saldo: "))
 jogadas = 0
 resultados = []
 
+# Load existing results from CSV if it exists
+if os.path.exists('resultados.csv'):
+    with open('resultados.csv', 'r') as csvfile:
+        reader = csv.reader(csvfile)
+        next(reader)  # Skip header
+        for row in reader:
+            resultados.append(float(row[1]))
+
 while True:
     print("1 - fortune tiger")
     print("2 - foguete da sorte")
     print("3 - jokenpo")
     print("4 - sair")
+    print("5 - exportar resultados para CSV")
+    print("6 - comparar resultados em gráfico")
     opcao = int(input("Digite a opção desejada: "))
     if opcao == 1:
         if ValorSaldo >= 10:
@@ -25,32 +37,39 @@ while True:
                 if opcao == 1:
                     print("Jogando...")
                     aporte = float(input("Digite o valor do aporte: "))
-                    ValorSaldo -= aporte
-                    jogadas += 1
-                    if jogadas <= 3:
-                        ganho = random.choice([aporte*2, aporte*3])
-                        ValorSaldo += ganho
-                        print(f"Você ganhou R$ {ganho}!")
+                    if aporte > ValorSaldo:
+                        print("Aporte maior que o saldo")
+                        break
+                    elif aporte < 10:
+                        print("Aporte menor que o mínimo permitido")
+                        break
                     else:
-                        resultado = random.choice(["ganhou", "perdeu", "neutro"])
-                        if resultado == "ganhou":
-                            ganho = random.choice([aporte, aporte*2])
+                        ValorSaldo -= aporte
+                        jogadas += 1
+                        if jogadas <= 3:
+                            ganho = random.choice([aporte*2, aporte*3])
                             ValorSaldo += ganho
                             print(f"Você ganhou R$ {ganho}!")
-                        elif resultado == "perdeu":
-                            print("Você perdeu a aposta.")
                         else:
-                            ValorSaldo += 10
-                            print("Você manteve o valor da aposta.")
-                    resultados.append(ValorSaldo)
-                    print("Saldo atual: R$ ", ValorSaldo)
-                    continuar = input("Deseja continuar? (s/n) ")
-                    if continuar == "n":
-                        print("Saindo...")
-                        break
-                    elif ValorSaldo < 10:
-                        print("Saldo insuficiente")
-                        break
+                            resultado = random.choice(["ganhou", "perdeu", "neutro"])
+                            if resultado == "ganhou":
+                                ganho = random.choice([aporte, aporte*2])
+                                ValorSaldo += ganho
+                                print(f"Você ganhou R$ {ganho}!")
+                            elif resultado == "perdeu":
+                                print("Você perdeu a aposta.")
+                            else:
+                                ValorSaldo += aporte
+                                print("Você manteve o valor da aposta.")
+                        resultados.append(ValorSaldo)
+                        print("Saldo atual: R$ ", ValorSaldo)
+                        continuar = input("Deseja continuar? (s/n) ")
+                        if continuar == "n":
+                            print("Saindo...")
+                            break
+                        elif ValorSaldo < 10:
+                            print("Saldo insuficiente")
+                            break
                 else:
                     print("Saindo...")
                     break
@@ -86,17 +105,30 @@ while True:
             print("Saldo insuficiente")
     elif opcao == 4:
         print("Saindo...")
+        plt.plot(resultados, marker='o')
+        plt.title('Desempenho das Apostas no Fortune Tiger')
+        plt.xlabel('Jogadas')
+        plt.ylabel('Saldo (R$)')
+        plt.grid(True)
+        plt.show()
         break
+    elif opcao == 5:
+        with open('resultados.csv', 'a', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            if os.path.getsize('resultados.csv') == 0:
+                writer.writerow(['Jogada', 'Saldo'])
+            for i, saldo in enumerate(resultados[-jogadas:]):
+                writer.writerow([i + 1, saldo])
+        print("Resultados exportados para resultados.csv")
+    elif opcao == 6:
+        plt.plot(resultados, marker='o')
+        plt.title('Desempenho das Apostas no Fortune Tiger')
+        plt.xlabel('Jogadas')
+        plt.ylabel('Saldo (R$)')
+        plt.grid(True)
+        plt.show()
     else:
         print("Opção inválida")
-
-# Plotando o gráfico de desempenho
-plt.plot(resultados, marker='o')
-plt.title('Desempenho das Apostas no Fortune Tiger')
-plt.xlabel('Jogadas')
-plt.ylabel('Saldo (R$)')
-plt.grid(True)
-plt.show()
 
 print("Fim do programa")
 print("=" * 40)
